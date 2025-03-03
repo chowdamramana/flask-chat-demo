@@ -29,7 +29,7 @@ pipeline {
                     sh """
                     docker stop ${IMAGE_NAME} || true
                     docker rm ${IMAGE_NAME} || true
-                    docker run -d --name ${IMAGE_NAME} -p 5000:5000 ${REGISTRY}/${IMAGE_NAME}:${TAG}
+                    docker run -d --name ${IMAGE_NAME} -p 8080:5000 ${REGISTRY}/${IMAGE_NAME}:${TAG}
                     """
                 }
             }
