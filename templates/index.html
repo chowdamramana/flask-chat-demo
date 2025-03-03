@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Demo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .chat-container {
+            width: 100%;
+            max-width: 600px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        .messages {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            background-color: #f9f9f9;
+        }
+        .input-container {
+            display: flex;
+        }
+        .input-container input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-right: 5px;
+        }
+        .input-container button {
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .input-container button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <h2>Simple Chat Demo</h2>
+        <div class="messages" id="messages"></div>
+        <div class="input-container">
+            <input type="text" id="userInput" placeholder="Type your message..." />
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <script>
+        async function sendMessage() {
+            const userInput = document.getElementById("userInput");
+            const messagesDiv = document.getElementById("messages");
+
+            if (!userInput.value.trim()) return;
+
+            // Add user message to chat
+            const userMessage = document.createElement("div");
+            userMessage.textContent = `You: ${userInput.value}`;
+            messagesDiv.appendChild(userMessage);
+
+            const messageContent = userInput.value;
+            userInput.value = "";
+
+            try {
+                const response = await fetch("/chat", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ message: messageContent }),
+                });
+
+                const data = await response.json();
+                const botMessage = document.createElement("div");
+                botMessage.textContent = `Bot: ${data.response}`;
+                messagesDiv.appendChild(botMessage);
+
+                // Scroll to the latest message
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            } catch (error) {
+                console.error("Error communicating with server:", error);
+            }
+        }
+    </script>
+</body>
+</html>
